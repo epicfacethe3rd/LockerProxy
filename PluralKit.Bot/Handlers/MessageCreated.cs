@@ -57,11 +57,21 @@ public class MessageCreated: IEventHandler<MessageCreateEvent>
         // We consider a message duplicate if it has the same ID as the previous message that hit the gateway
         _lastMessageCache.GetLastMessage(msg.ChannelId)?.Current.Id == msg.Id;
 
+    private bool IsUserLocked( ) =>
+        // We consider a user to be locked if they:
+        // Do not have the manage server permission
+        if(member.permissions.has(PermissionsBitField.Flags.ManageGuild)) return false;
+        // Do not have the "authorized proxy role"
+        if(/* Find out if a user has the "authorized proxy role" from the server's config */) return false;
+        // Are blocked by the bot
+        if(/* Find out if the user is in the bot's blocklist */) return true;
+
     public async Task Handle(int shardId, MessageCreateEvent evt)
     {
         if (evt.Author.Id == _config.ClientId) return;
         if (evt.Type != Message.MessageType.Default && evt.Type != Message.MessageType.Reply) return;
         if (IsDuplicateMessage(evt)) return;
+        if (IsUserLocked) return;
 
         var botPermissions = await _cache.PermissionsIn(evt.ChannelId);
         if (!botPermissions.HasFlag(PermissionSet.SendMessages)) return;
