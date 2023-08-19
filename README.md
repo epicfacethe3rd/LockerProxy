@@ -1,4 +1,35 @@
-# PluralKit
+# LockerProxy
+Lockerproxy is a Fork of PluralKit designed to add much needed moderation features for server staff, most notably the ability for server staff to restrict who is allowed to proxy to a specific role
+
+## Why?
+Currently, PluralKit's dev team considers the ability for server staff to control who is allowed to proxy an unnacceptable addition to their bot, as they do not belive the greatly improved moderation abilities outweigh the possibility of syscourse based discrimination, as per [Issue 267](https://github.com/PluralKit/PluralKit/issues/267) and presumably many others on github
+
+We disagree with this for a number of reasons.
+
+While the point of view held by PluralKit's developement team is entirely valid, it is also worth noting it comes from a place where server staff are generally made up of a majority of systems, making it so server staff is generally all on the same page on how to handle incidents such as proxy misuse, lack of a system tag, and many other similar issues. Additionally, it's often that users are also majority systems, so users and server staff are *also* on the same page about what is and is not acceptable behavior and or proxy use. This is not the case on every server.
+
+Many servers with PluralKit have a minority userbase of systems, and often times only one or two staff who are systems. Sometimes no staff at all who are systems. This can lead do a drastic disconnect in what is and what is not acceptable behavior in many servers, and cause much headache, heartache, and anger between staff and the minority userbase of systems. This should not be a suprise given the estimates of how much of the population are systems, and how even fewer may be publicly open about their disorder.
+
+These conflicts between staff and systems can often result in systems becoming greatly displeased and upset with how staff handles system issues, and staff that feels a minorty userbase is constantly dragging them into conflicts they see as minor issues not worthy of "real" moderation. Often times, staff of such servers have stated they wished there was a way to restrict who can and cannot proxy, for a variety of reasons.
+
+## Why not just Timeout/Mute/Kick/Ban problematic users instead as suggested?
+
+The point of view that users who are trolling with proxies are problem users regardless of the fact they are proxying, is entirely valid. However, it is not at all uncommon for server staff to see such extremely dire issues, as instead complete non-issues not worthy of any kind of moderation, outside of occassionally chastizing the user doing so. We feel that the current PluralKit Development team is knowing or unknowingly ignoring this reality, albiet for the entirely understandable purpose of limiting syscourse and gatekeeping.
+
+That said, it is not a stretch to say that many servers have outright abandoned PK, or ignored such moderation concerns from users outright as a result of PK's lack of moderation tools in this regard. We feel that while the intent to limit possible gatekeeping and syscourse is noble, it is in this case at odds with the primary purpose of an accessibility tool; to make it easier for disabled people to interact with abled people, but also as importantly, vice versa: to make it easier for abled people to interact with disabled people. We feel the inclusion of such moderation tools will make proxy tools more appealing to server staff, and thus increase the prevelance of them among majority singlet servers. In our opinion, this **Greatly** outweighs the possibility of gatekeeping and syscourse by bad actors, especially given that this likely will increase the presence and openness of systems in many communites, helping to normalize them
+
+To quote an engineering instructor of mine: If your tool sucks to use, people aren't going to want to use it
+
+Let's make proxy tools easier to use - for server staff as much as for systems
+
+## How do i use LockerProxy?
+Lockerproxy is currently in a form of closed beta while it is being developed. It's currently self hosted and maintained entirely by myself, out of pocket. If you want access to it, and you're a server operator, let me know, and we'll figure something out.
+
+Fundamentally it's only about a hundred lines of code I personally have to maintain, but this is still very much a side project for myself. You're free to self host a version of it to try it out, I just ask that if I get to a more open and public release, you replace any self hosted instances of LockerProxy with the publicly hosted one, so that it's more accessible to other users.
+
+As LockerProxy is a fork of Pluralkit, it *should* be able to be set up exactly the same as Pluralkit, albiet with a different command prefix \(`lp` instead of `pk` by default). Pluralkit's Readme is below.
+
+# [PluralKit](https://github.com/PluralKit/PluralKit)
 PluralKit is a Discord bot meant for plural communities. It has features like message proxying through webhooks, switch tracking, system and member profiles, and more.
 
 **Do you just want to add PluralKit to your server? If so, you don't need any of this. Use the bot's invite link: https://discord.com/oauth2/authorize?client_id=466378653216014359&scope=bot%20applications.commands&permissions=536995904**
