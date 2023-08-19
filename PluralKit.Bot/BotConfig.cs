@@ -2,7 +2,7 @@ namespace PluralKit.Bot;
 
 public class BotConfig
 {
-    public static readonly string[] DefaultPrefixes = { "pk;", "pk!" };
+    public static readonly string[] DefaultPrefixes = { "lp;", "lp!" };
 
     public string Token { get; set; }
     public ulong ClientId { get; set; }
