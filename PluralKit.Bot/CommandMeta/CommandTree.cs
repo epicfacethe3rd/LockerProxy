@@ -74,6 +74,11 @@ public partial class CommandTree
             else if (ctx.Match("commands"))
                 return PrintCommandList(ctx, "channel blacklisting", BlacklistCommands);
             else return PrintCommandExpectedError(ctx, BlacklistCommands);
+        if (ctx.Match("proxyrole", "pr"))
+            if (ctx.Match("set"))
+                return ctx.Execute<ServerConfig>(SetProxyRole, m => m.SetProxyRole(ctx, true));
+            if (ctx.Match("show"))
+                return ctx.Execute<ServerConfig>(ShowProxyRole, m => m.ShowProxyRole(ctx, true));
         if (ctx.Match("proxy"))
             if (ctx.Match("debug"))
                 return ctx.Execute<Checks>(ProxyCheck, m => m.MessageProxyCheck(ctx));
