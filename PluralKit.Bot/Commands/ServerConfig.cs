@@ -270,4 +270,14 @@ public class ServerConfig
         else
             await ctx.Reply($"{Emojis.Success} Log cleanup has been **disabled** for this server.");
     }
+        //This will be the command for setting the proxy role
+    public async Task SetProxyRole(Context ctx)
+    {
+        
+    }
+    
+    public async Task ShowProxyRole(Context ctx)
+    {
+        
+    }
 }
