@@ -62,7 +62,6 @@ public class MessageCreated: IEventHandler<MessageCreateEvent>
         if (evt.Author.Id == _config.ClientId) return;
         if (evt.Type != Message.MessageType.Default && evt.Type != Message.MessageType.Reply) return;
         if (IsDuplicateMessage(evt)) return;
-        if (IsUserLocked) return;
 
         var botPermissions = await _cache.PermissionsIn(evt.ChannelId);
         if (!botPermissions.HasFlag(PermissionSet.SendMessages)) return;
