@@ -352,5 +352,4 @@ public class ServerConfig
                 eb.Field(new Embed.Field(await CategoryName(lastCategory), fieldValue.ToString()));
             });
     }
-    }
 }
