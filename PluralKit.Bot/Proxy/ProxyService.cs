@@ -188,7 +188,7 @@ public class ProxyService
                 throw new ProxyChecksFailedException(
                     "Proxying was disabled in this channel by a server administrator (via role restrictions).");
             // Do not have the "authorized proxy role"
-            if(/* Find out if a user has the "authorized proxy role" from the server's config */)
+            // if(/* Find out if a user has the "authorized proxy role" from the server's config */)
                 throw new ProxyChecksFailedException(
                     "Proxying was disabled in this channel by a server administrator (via role restrictions).");
         }
