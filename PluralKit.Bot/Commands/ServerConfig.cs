@@ -272,12 +272,85 @@ public class ServerConfig
     }
         //This will be the command for setting the proxy role
     public async Task SetProxyRole(Context ctx)
-    {
-        
+    { // Copied from SetBlacklisted
+        await ctx.CheckGuildContext().CheckAuthorPermission(PermissionSet.ManageGuild, "Manage Server");
+
+        var affectedChannels = new List<Channel>();
+        if (ctx.Match("all"))
+            affectedChannels = (await _cache.GetGuildChannels(ctx.Guild.Id))
+                .Where(x => x.Type == Channel.ChannelType.GuildText).ToList();
+        else if (!ctx.HasNext()) throw new PKSyntaxError("You must pass one or more #channels.");
+        else
+            while (ctx.HasNext())
+            {
+                var channelString = ctx.PeekArgument();
+                var channel = await ctx.MatchChannel();
+                if (channel == null || channel.GuildId != ctx.Guild.Id) throw Errors.ChannelNotFound(channelString);
+                affectedChannels.Add(channel);
+            }
+
+        var guild = await ctx.Repository.GetGuild(ctx.Guild.Id);
+
+        var blacklist = guild.Blacklist.ToHashSet();
+        if (shouldAdd)
+            blacklist.UnionWith(affectedChannels.Select(c => c.Id));
+        else
+            blacklist.ExceptWith(affectedChannels.Select(c => c.Id));
+
+        await ctx.Repository.UpdateGuild(ctx.Guild.Id, new GuildPatch { Blacklist = blacklist.ToArray() });
+
+        await ctx.Reply(
+            $"{Emojis.Success} Channels {(shouldAdd ? "added to" : "removed from")} the proxy blacklist.");
     }
     
     public async Task ShowProxyRole(Context ctx)
-    {
-        
+    { // Copied from ShowBlacklisted
+        await ctx.CheckGuildContext().CheckAuthorPermission(PermissionSet.ManageGuild, "Manage Server");
+
+        var blacklist = await ctx.Repository.GetGuild(ctx.Guild.Id);
+
+        // Resolve all channels from the cache and order by position
+        var channels = (await Task.WhenAll(blacklist.Blacklist
+                .Select(id => _cache.TryGetChannel(id))))
+            .Where(c => c != null)
+            .OrderBy(c => c.Position)
+            .ToList();
+
+        if (channels.Count == 0)
+        {
+            await ctx.Reply("This server has no blacklisted channels.");
+            return;
+        }
+
+        await ctx.Paginate(channels.ToAsyncEnumerable(), channels.Count, 25,
+            $"Blacklisted channels for {ctx.Guild.Name}",
+            null,
+            async (eb, l) =>
+            {
+                async Task<string> CategoryName(ulong? id) =>
+                    id != null ? (await _cache.GetChannel(id.Value)).Name : "(no category)";
+
+                ulong? lastCategory = null;
+
+                var fieldValue = new StringBuilder();
+                foreach (var channel in l)
+                {
+                    if (lastCategory != channel!.ParentId && fieldValue.Length > 0)
+                    {
+                        eb.Field(new Embed.Field(await CategoryName(lastCategory), fieldValue.ToString()));
+                        fieldValue.Clear();
+                    }
+                    else
+                    {
+                        fieldValue.Append("\n");
+                    }
+
+                    fieldValue.Append(channel.Mention());
+                    lastCategory = channel.ParentId;
+                }
+
+                eb.Field(new Embed.Field(await CategoryName(lastCategory), fieldValue.ToString()));
+            });
+    }
     }
 }
