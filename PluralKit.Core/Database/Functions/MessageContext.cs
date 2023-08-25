@@ -16,6 +16,8 @@ public class MessageContext
     /// </summary>
     public ulong? LogChannel { get; }
     public bool InBlacklist { get; }
+    public bool IsProxyLocked { get; }
+    public string? ProxyRole { get; } // Might need to be ulong and not a string, unsure
     public bool InLogBlacklist { get; }
     public bool LogCleanupEnabled { get; }
     public bool ProxyEnabled { get; }

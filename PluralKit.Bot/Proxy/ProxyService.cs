@@ -178,6 +178,21 @@ public class ProxyService
         if (msg.Id == msg.ChannelId)
             throw new ProxyChecksFailedException("This message is the initial message in a forum post, which PluralKit is unable to proxy correctly.");
 
+        // Make sure proxying is not locked
+        if (ctx.IsProxyLocked == true){
+            // If proxying is locked, make sure user is unlocked
+            
+            // We consider a user to be locked if they:
+            // Do not have the manage server permission
+            if(member.permissions.has(PermissionsBitField.Flags.ManageGuild))
+                throw new ProxyChecksFailedException(
+                    "Proxying was disabled in this channel by a server administrator (via role restrictions).");
+            // Do not have the "authorized proxy role"
+            if(/* Find out if a user has the "authorized proxy role" from the server's config */)
+                throw new ProxyChecksFailedException(
+                    "Proxying was disabled in this channel by a server administrator (via role restrictions).");
+        }
+                
         // Make sure proxying is enabled here
         if (ctx.InBlacklist)
             throw new ProxyChecksFailedException(
