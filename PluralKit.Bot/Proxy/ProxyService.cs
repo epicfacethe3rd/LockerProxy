@@ -184,14 +184,9 @@ public class ProxyService
             
             // We consider a user to be locked if they:
             // Do not have the manage server permission
-            // 
-            /*  throws an error currently over PermissionsBitField in line below
-            
             if(member.permissions.has(PermissionsBitField.Flags.ManageGuild))
                 throw new ProxyChecksFailedException(
                     "Proxying was disabled in this channel by a server administrator (via role restrictions).");
-            */
-            
             // Do not have the "authorized proxy role"
             // if(/* Find out if a user has the "authorized proxy role" from the server's config */)
                 throw new ProxyChecksFailedException(
