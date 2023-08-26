@@ -270,47 +270,47 @@ public class ServerConfig
         else
             await ctx.Reply($"{Emojis.Success} Log cleanup has been **disabled** for this server.");
     }
-        //This will be the command for setting the proxy role
+        // This will be the command for setting the proxy role
     public async Task SetProxyRole(Context ctx, bool shouldAdd)
     { //copied from SetBlacklisted
         await ctx.CheckGuildContext().CheckAuthorPermission(PermissionSet.ManageGuild, "Manage Server");
 
-        var affectedChannels = new List<Channel>();
+        var affectedRoles = new List<Channel>(); // TODO change all this to reflect roles instead of channels
         if (ctx.Match("all"))
-            affectedChannels = (await _cache.GetGuildChannels(ctx.Guild.Id))
+            affectedRoles = (await _cache.GetGuildChannels(ctx.Guild.Id))
                 .Where(x => x.Type == Channel.ChannelType.GuildText).ToList();
-        else if (!ctx.HasNext()) throw new PKSyntaxError("You must pass one or more #channels.");
+        else if (!ctx.HasNext()) throw new PKSyntaxError("You must pass one or more roles.");
         else
             while (ctx.HasNext())
             {
-                var channelString = ctx.PeekArgument();
-                var channel = await ctx.MatchChannel();
-                if (channel == null || channel.GuildId != ctx.Guild.Id) throw Errors.ChannelNotFound(channelString);
-                affectedChannels.Add(channel);
+                var roleString = ctx.PeekArgument();
+                var role = await ctx.MatchChannel();
+                if (role == null || role.GuildId != ctx.Guild.Id) throw Errors.RoleNotFound(roleString);
+                affectedRoles.Add(role);
             }
 
         var guild = await ctx.Repository.GetGuild(ctx.Guild.Id);
 
-        var blacklist = guild.Blacklist.ToHashSet();
+        var proxyrole = guild.ProxyRole.ToHashSet();
         if (shouldAdd)
-            blacklist.UnionWith(affectedChannels.Select(c => c.Id));
+            proxyrole.UnionWith(affectedRoles.Select(c => c.Id));
         else
-            blacklist.ExceptWith(affectedChannels.Select(c => c.Id));
+            proxyrole.ExceptWith(affectedRoles.Select(c => c.Id));
 
-        await ctx.Repository.UpdateGuild(ctx.Guild.Id, new GuildPatch { Blacklist = blacklist.ToArray() });
+        await ctx.Repository.UpdateGuild(ctx.Guild.Id, new GuildPatch { ProxyRole = proxyrole.ToArray() });
 
         await ctx.Reply(
-            $"{Emojis.Success} Channels {(shouldAdd ? "added to" : "removed from")} the proxy blacklist.");
+            $"{Emojis.Success} Roles {(shouldAdd ? "added to" : "removed from")} the proxy lock roles.");
     }
     
     public async Task ShowProxyRole(Context ctx)
     { //copied from ShowBlacklisted
         await ctx.CheckGuildContext().CheckAuthorPermission(PermissionSet.ManageGuild, "Manage Server");
 
-        var blacklist = await ctx.Repository.GetGuild(ctx.Guild.Id);
+        var proxyrole = await ctx.Repository.GetGuild(ctx.Guild.Id);
 
-        // Resolve all channels from the cache and order by position
-        var channels = (await Task.WhenAll(blacklist.Blacklist
+        // Resolve all channels from the cache and order by position || TODO revise this to get roles instead - simon
+        var channels = (await Task.WhenAll(proxyrole.ProxyRole
                 .Select(id => _cache.TryGetChannel(id))))
             .Where(c => c != null)
             .OrderBy(c => c.Position)
@@ -318,12 +318,12 @@ public class ServerConfig
 
         if (channels.Count == 0)
         {
-            await ctx.Reply("This server has no blacklisted channels.");
+            await ctx.Reply("This server has no proxy role");
             return;
         }
 
         await ctx.Paginate(channels.ToAsyncEnumerable(), channels.Count, 25,
-            $"Blacklisted channels for {ctx.Guild.Name}",
+            $"Proxy role for {ctx.Guild.Name}",
             null,
             async (eb, l) =>
             {
@@ -352,8 +352,40 @@ public class ServerConfig
                 eb.Field(new Embed.Field(await CategoryName(lastCategory), fieldValue.ToString()));
             });
     }
-    public Task SettingProxyLock(Context ctx, bool b)
-    {
-        throw new NotImplementedException(); // TODO
+    public async Task SettingProxyLock(Context ctx, bool enable)
+    { //copied from SetLogEnabled TODO reflect SettingProxyLock instead of SetLogEnabled
+        await ctx.CheckGuildContext().CheckAuthorPermission(PermissionSet.ManageGuild, "Manage Server");
+
+        var affectedChannels = new List<Channel>();
+        if (ctx.Match("all"))
+            affectedChannels = (await _cache.GetGuildChannels(ctx.Guild.Id))
+                .Where(x => x.Type == Channel.ChannelType.GuildText).ToList();
+        else if (!ctx.HasNext()) throw new PKSyntaxError("You must pass one or more #channels.");
+        else
+            while (ctx.HasNext())
+            {
+                var channelString = ctx.PeekArgument();
+                var channel = await ctx.MatchChannel();
+                if (channel == null || channel.GuildId != ctx.Guild.Id) throw Errors.ChannelNotFound(channelString);
+                affectedChannels.Add(channel);
+            }
+
+        ulong? logChannel = null;
+        var config = await ctx.Repository.GetGuild(ctx.Guild.Id);
+        logChannel = config.LogChannel;
+
+        var blacklist = config.LogBlacklist.ToHashSet();
+        if (enable)
+            blacklist.ExceptWith(affectedChannels.Select(c => c.Id));
+        else
+            blacklist.UnionWith(affectedChannels.Select(c => c.Id));
+
+        await ctx.Repository.UpdateGuild(ctx.Guild.Id, new GuildPatch { LogBlacklist = blacklist.ToArray() });
+
+        await ctx.Reply(
+            $"{Emojis.Success} Message logging for the given channels {(enable ? "enabled" : "disabled")}." +
+            (logChannel == null
+                ? $"\n{Emojis.Warn} Please note that no logging channel is set, so there is nowhere to log messages to. You can set a logging channel using `pk;log channel #your-log-channel`."
+                : ""));
     }
 }
