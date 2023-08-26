@@ -183,4 +183,7 @@ public static class Errors
 
     public static PKError ChannelNotFound(string channelString) =>
         new($"Channel \"{channelString}\" not found or is not in this server.");
+    
+    public static PKError RoleNotFound(string roleString) =>
+        new($"Channel \"{roleString}\" not found or is not in this server.");
 }
