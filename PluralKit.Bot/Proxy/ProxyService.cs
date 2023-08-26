@@ -163,7 +163,25 @@ public class ProxyService
         // Make sure author has a system
         if (ctx.SystemId == null)
             throw new ProxyChecksFailedException(Errors.NoSystemError.Message);
+        // Make sure proxying is not locked
+        if (ctx.SettingProxyLock == true){
+            // If proxying is locked, make sure user is unlocked
+            
+            // We consider a user to be locked if they:
+            // Do not have the manage server permission
+            // 
+            /*  throws an error currently over PermissionsBitField in line below
 
+            if(member.permissions.has(PermissionsBitField.Flags.ManageGuild))
+                throw new ProxyChecksFailedException(
+                    "Proxying was disabled in this channel by a server administrator (via role restrictions).");
+            */
+            
+            // Do not have the "authorized proxy role"
+            // if(/* Find out if a user has the "authorized proxy role" from the server's config */)
+            throw new ProxyChecksFailedException(
+                "Proxying was disabled in this channel by a server administrator (via role restrictions).");
+        }
         // Make sure channel is a guild text channel and this is a normal message
         if (!DiscordUtils.IsValidGuildChannel(channel))
             throw new ProxyChecksFailedException("This channel is not a text channel.");
@@ -272,7 +290,27 @@ public class ProxyService
         if (ctx.InBlacklist)
             throw new ProxyChecksFailedException(
                 "Proxying was disabled in this channel by a server administrator (via the proxy blacklist).");
+        
+        // Make sure proxying is not locked
+        if (ctx.SettingProxyLock == true){
+            // If proxying is locked, make sure user is unlocked
+            
+            // We consider a user to be locked if they:
+            // Do not have the manage server permission
+            // 
+            /*  throws an error currently over PermissionsBitField in line below
 
+            if(member.permissions.has(PermissionsBitField.Flags.ManageGuild))
+                throw new ProxyChecksFailedException(
+                    "Proxying was disabled in this channel by a server administrator (via role restrictions).");
+            */
+            
+            // Do not have the "authorized proxy role"
+            // if(/* Find out if a user has the "authorized proxy role" from the server's config */)
+            throw new ProxyChecksFailedException(
+                "Proxying was disabled in this channel by a server administrator (via role restrictions).");
+        }
+        
         var autoproxySettings = await _repo.GetAutoproxySettings(ctx.SystemId.Value, msg.Guild!.Value, null);
         var config = await _repo.GetSystemConfig(ctx.SystemId.Value);
         var prevMatched = _matcher.TryMatch(ctx, autoproxySettings, members, out var prevMatch, originalMsg.Content,

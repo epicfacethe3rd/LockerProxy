@@ -3,6 +3,7 @@
         system_id int,
         log_channel bigint,
         in_blacklist bool,
+        proxylockenable bool,
         in_log_blacklist bool,
         log_cleanup_enabled bool,
         proxy_enabled bool,
@@ -37,6 +38,8 @@ as $$
          or (thread_id = any (guild.blacklist)))     as in_blacklist,
         ((channel_id = any (guild.log_blacklist))
          or (thread_id = any (guild.log_blacklist))) as in_log_blacklist,
+        guild.setproxylock                           as setproxylock,
+        guild.proxyrole                              as proxyrole,
         coalesce(guild.log_cleanup_enabled, false),
         coalesce(system_guild.proxy_enabled, true)   as proxy_enabled,
         system_last_switch.switch                    as last_switch,

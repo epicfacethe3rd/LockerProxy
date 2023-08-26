@@ -16,6 +16,7 @@ public class MessageContext
     /// </summary>
     public ulong? LogChannel { get; }
     public bool InBlacklist { get; }
+    public bool SettingProxyLock { get; }
     public bool InLogBlacklist { get; }
     public bool LogCleanupEnabled { get; }
     public bool ProxyEnabled { get; }

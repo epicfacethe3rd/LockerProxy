@@ -108,6 +108,11 @@ public partial class CommandTree
     public static Command Invite = new Command("invite", "invite", "Gets a link to invite PluralKit to other servers");
     public static Command PermCheck = new Command("permcheck", "permcheck <guild>", "Checks whether a server's permission setup is correct");
     public static Command Admin = new Command("admin", "admin", "Super secret admin commands (sshhhh)");
+    // Lockerproxy commmands
+    public static Command ProxyLockEnable = new Command("proxylock enable", "proxylock enable", "Enables the Proxy Lock system");
+    public static Command ProxyLockDisable = new Command("proxylock disable", "proxylock disable", "Disables the Proxy Lock system");
+    public static Command ProxyRoleSet = new Command("proxyrole set", "proxyrole set <@role>", "Selects a role to be used for the proxy role");
+    public static Command ProxyRoleShow = new Command("proxyrole show", "proxyrole show", "Displays the current proxy role");
 
     public static Command[] SystemCommands =
     {

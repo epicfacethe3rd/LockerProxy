@@ -301,7 +301,6 @@ public class ServerConfig
 
         await ctx.Reply(
             $"{Emojis.Success} Channels {(shouldAdd ? "added to" : "removed from")} the proxy blacklist.");
-        throw new NotImplementedException(); //rider is throwing a fit if i don't have this
     }
     
     public async Task ShowProxyRole(Context ctx)
@@ -352,7 +351,9 @@ public class ServerConfig
 
                 eb.Field(new Embed.Field(await CategoryName(lastCategory), fieldValue.ToString()));
             });
-        throw new NotImplementedException(); //rider is throwing a fit if i don't have this
     }
-
+    public Task SettingProxyLock(Context ctx, bool b)
+    {
+        throw new NotImplementedException(); // TODO
+    }
 }
