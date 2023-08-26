@@ -38,7 +38,7 @@ as $$
          or (thread_id = any (guild.blacklist)))     as in_blacklist,
         ((channel_id = any (guild.log_blacklist))
          or (thread_id = any (guild.log_blacklist))) as in_log_blacklist,
-        guild.setproxylock                           as settingproxylock,
+        guild.settingproxylock                           as settingproxylock,
         guild.proxyrole                              as proxyrole,
         coalesce(guild.log_cleanup_enabled, false),
         coalesce(system_guild.proxy_enabled, true)   as proxy_enabled,
