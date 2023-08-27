@@ -164,7 +164,7 @@ public class ProxyService
         if (ctx.SystemId == null)
             throw new ProxyChecksFailedException(Errors.NoSystemError.Message);
         // Make sure proxying is not locked
-        if (ctx.SettingProxyLock == true && member.Roles.Contains(gp.ProxyRole) == true){
+        if (ctx.SettingProxyLock == true && member.Roles.Contains(gp.ProxyRole) == false){
             // If proxying is locked, make sure user is unlocked
             
             // We consider a user to be locked if they:
