@@ -56,12 +56,12 @@ public class ProxyService
         _logger = logger.ForContext<ProxyService>();
     }
 
-    public async Task<bool> HandleIncomingMessage(MessageCreateEvent message, MessageContext ctx,
+    public async Task<bool> HandleIncomingMessage(MessageCreateEvent message,  MessageContext ctx, GuildMember member, GuildPatch gp,
                                 Guild guild, Channel channel, bool allowAutoproxy, PermissionSet botPermissions)
     {
         var rootChannel = await _cache.GetRootChannel(message.ChannelId);
 
-        if (!ShouldProxy(channel, rootChannel, message, ctx))
+        if (!ShouldProxy(channel, rootChannel, message, ctx, member, gp))
             return false;
 
         var autoproxySettings = await _repo.GetAutoproxySettings(ctx.SystemId.Value, guild.Id, null);
@@ -158,24 +158,17 @@ public class ProxyService
         return null;
     }
 
-    public bool ShouldProxy(Channel channel, Channel rootChannel, Message msg, MessageContext ctx)
+    public bool ShouldProxy(Channel channel, Channel rootChannel, Message msg, MessageContext ctx, GuildMember member, GuildPatch gp)
     {
         // Make sure author has a system
         if (ctx.SystemId == null)
             throw new ProxyChecksFailedException(Errors.NoSystemError.Message);
         // Make sure proxying is not locked
-        if (ctx.SettingProxyLock == true){
+        if (ctx.SettingProxyLock == true && member.Roles.Contains(gp.ProxyRole) == true){
             // If proxying is locked, make sure user is unlocked
             
             // We consider a user to be locked if they:
-            // Do not have the manage server permission
-            // 
-            /*  throws an error currently over PermissionsBitField in line below
-
-            if(member.permissions.has(PermissionsBitField.Flags.ManageGuild))
-                throw new ProxyChecksFailedException(
-                    "Proxying was disabled in this channel by a server administrator (via role restrictions).");
-            */
+            // TODO Do not have the manage server permission
             
             // Do not have the "authorized proxy role"
             // if(/* Find out if a user has the "authorized proxy role" from the server's config */)
