@@ -272,35 +272,43 @@ public class ServerConfig
     }
         // This will be the command for setting the proxy role
     public async Task SetProxyRole(Context ctx, bool shouldAdd)
-    { //copied from SetBlacklisted
+    { //Copied from SetLogChannel TODO make this reflect a role and not a channel
         await ctx.CheckGuildContext().CheckAuthorPermission(PermissionSet.ManageGuild, "Manage Server");
+        var settings = await ctx.Repository.GetGuild(ctx.Guild.Id);
 
-        var affectedRoles = new List<Channel>(); // TODO change all this to reflect roles instead of channels
-        if (ctx.Match("all"))
-            affectedRoles = (await _cache.GetGuildChannels(ctx.Guild.Id))
-                .Where(x => x.Type == Channel.ChannelType.GuildText).ToList();
-        else if (!ctx.HasNext()) throw new PKSyntaxError("You must pass one or more roles.");
-        else
-            while (ctx.HasNext())
+        if (ctx.MatchClear() && await ctx.ConfirmClear("the server Proxy Role"))
+        {
+            await ctx.Repository.UpdateGuild(ctx.Guild.Id, new GuildPatch { ProxyRole = null });
+            await ctx.Reply($"{Emojis.Success} Proxy Role cleared.");
+            return;
+        }
+
+        if (!ctx.HasNext())
+        {
+            if (settings.LogChannel == null)
             {
-                var roleString = ctx.PeekArgument();
-                var role = await ctx.MatchChannel();
-                if (role == null || role.GuildId != ctx.Guild.Id) throw Errors.RoleNotFound(roleString);
-                affectedRoles.Add(role);
+                await ctx.Reply("This server does not have a Proxy Role set.");
+                return;
             }
 
-        var guild = await ctx.Repository.GetGuild(ctx.Guild.Id);
+            await ctx.Reply($"This server's Proxy Role is currently set to <#{settings.LogChannel}>.");
+            return;
+        }
+        Channel channel = null; // this entire section might need to be tossed. Unclear. -persica
+        var channelString = ctx.PeekArgument();
+        channel = await ctx.MatchChannel();
+        if (channel == null || channel.GuildId != ctx.Guild.Id) throw Errors.ChannelNotFound(channelString);
+        if (channel.Type != Channel.ChannelType.GuildText && channel.Type != Channel.ChannelType.GuildPublicThread && channel.Type != Channel.ChannelType.GuildPrivateThread)
+            throw new PKError("PluralKit cannot log messages to this type of channel.");
 
-        var proxyrole = guild.ProxyRole.ToHashSet();
-        if (shouldAdd)
-            proxyrole.UnionWith(affectedRoles.Select(c => c.Id));
-        else
-            proxyrole.ExceptWith(affectedRoles.Select(c => c.Id));
+        var perms = await _cache.PermissionsIn(channel.Id);
+        if (!perms.HasFlag(PermissionSet.SendMessages))
+            throw new PKError("PluralKit is missing **Send Messages** permissions in the new log channel.");
+        if (!perms.HasFlag(PermissionSet.EmbedLinks))
+            throw new PKError("PluralKit is missing **Embed Links** permissions in the new log channel.");
 
-        await ctx.Repository.UpdateGuild(ctx.Guild.Id, new GuildPatch { ProxyRole = proxyrole.ToArray() });
-
-        await ctx.Reply(
-            $"{Emojis.Success} Roles {(shouldAdd ? "added to" : "removed from")} the proxy lock roles.");
+        await ctx.Repository.UpdateGuild(ctx.Guild.Id, new GuildPatch { LogChannel = channel.Id });
+        await ctx.Reply($"{Emojis.Success} Proxy logging channel set to <#{channel.Id}>.");
     }
     
     public async Task ShowProxyRole(Context ctx)

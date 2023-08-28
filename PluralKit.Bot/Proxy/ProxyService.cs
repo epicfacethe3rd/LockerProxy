@@ -56,12 +56,12 @@ public class ProxyService
         _logger = logger.ForContext<ProxyService>();
     }
 
-    public async Task<bool> HandleIncomingMessage(MessageCreateEvent message,  MessageContext ctx, GuildMember member, GuildPatch gp,
+    public async Task<bool> HandleIncomingMessage(MessageCreateEvent message,  MessageContext ctx,
                                 Guild guild, Channel channel, bool allowAutoproxy, PermissionSet botPermissions)
     {
         var rootChannel = await _cache.GetRootChannel(message.ChannelId);
 
-        if (!ShouldProxy(channel, rootChannel, message, ctx, member, gp))
+        if (!ShouldProxy(channel, rootChannel, message, ctx))
             return false;
 
         var autoproxySettings = await _repo.GetAutoproxySettings(ctx.SystemId.Value, guild.Id, null);
@@ -158,20 +158,17 @@ public class ProxyService
         return null;
     }
 
-    public bool ShouldProxy(Channel channel, Channel rootChannel, Message msg, MessageContext ctx, GuildMember member, GuildPatch gp)
+    public bool ShouldProxy(Channel channel, Channel rootChannel, Message msg, MessageContext ctx)
     {
         // Make sure author has a system
         if (ctx.SystemId == null)
             throw new ProxyChecksFailedException(Errors.NoSystemError.Message);
         // Make sure proxying is not locked
-        if (ctx.SettingProxyLock == true && member.Roles.Contains(gp.ProxyRole) == false){
-            // If proxying is locked, make sure user is unlocked
+        if (ctx.SettingProxyLock == true && GuildMember.Roles.Contains<ulong>(GuildPatch.ProxyRole) == false){ //TODO fix this problem with static and non static mismatch.
+            // for some reason the way Rider is wanting this (line above) right now is gonna make me refactor a ton of stuff. I'm definitly missing something here. 
+            // If proxying is locked, TODO check if user does not have the manage server permission
             
-            // We consider a user to be locked if they:
-            // TODO Do not have the manage server permission
-            
-            // Do not have the "authorized proxy role"
-            // if(/* Find out if a user has the "authorized proxy role" from the server's config */)
+            // If they have the manage server permission, return true. Else...
             throw new ProxyChecksFailedException(
                 "Proxying was disabled in this channel by a server administrator (via role restrictions).");
         }
