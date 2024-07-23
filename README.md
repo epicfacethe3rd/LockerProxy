@@ -1,5 +1,6 @@
 # LockerProxy
-Lockerproxy is a Fork of PluralKit designed to add much needed moderation features for server staff, most notably the ability for server staff to restrict who is allowed to proxy to a specific role
+Lockerproxy was a Fork of PluralKit designed to add much needed moderation features for server staff, most notably the ability for server staff to restrict who is allowed to proxy to a specific role
+Lockerproxy was abandoned due to a lack of time to be able to work on the project, and lack of familiarity with the kind of software stack Pluralkit uses. I've personally just never worked with a discord bot at this level, nor anything with a database like this.
 
 ## Why?
 Currently, PluralKit's dev team considers the ability for server staff to control who is allowed to proxy an unnacceptable addition to their bot, as they do not belive the greatly improved moderation abilities outweigh the possibility of syscourse based discrimination, as per [Issue 267](https://github.com/PluralKit/PluralKit/issues/267) and presumably many others on github
@@ -23,11 +24,12 @@ To quote an engineering instructor of mine: If your tool sucks to use, people ar
 Let's make proxy tools easier to use - for server staff as much as for systems
 
 ## How do i use LockerProxy?
-Lockerproxy is currently in a form of closed beta while it is being developed. It's currently self hosted and maintained entirely by myself, out of pocket. If you want access to it, and you're a server operator, let me know, and we'll figure something out.
+Lockerproxy is currently abandoned due to lack of personal time to work on this project.
+~~Lockerproxy is currently in a form of closed beta while it is being developed. It's currently self hosted and maintained entirely by myself, out of pocket. If you want access to it, and you're a server operator, let me know, and we'll figure something out.~~
 
-Fundamentally it's only about a hundred lines of code I personally have to maintain, but this is still very much a side project for myself. You're free to self host a version of it to try it out, I just ask that if I get to a more open and public release, you replace any self hosted instances of LockerProxy with the publicly hosted one, so that it's more accessible to other users.
+~~Fundamentally it's only about a hundred lines of code I personally have to maintain, but this is still very much a side project for myself. You're free to self host a version of it to try it out, I just ask that if I get to a more open and public release, you replace any self hosted instances of LockerProxy with the publicly hosted one, so that it's more accessible to other users.~~
 
-As LockerProxy is a fork of Pluralkit, it *should* be able to be set up exactly the same as Pluralkit, albiet with a different command prefix \(`lp` instead of `pk` by default). Pluralkit's Readme is below.
+~~As LockerProxy is a fork of Pluralkit, it *should* be able to be set up exactly the same as Pluralkit, albiet with a different command prefix \(`lp` instead of `pk` by default).~~ Pluralkit's Readme is below.
 
 # [PluralKit](https://github.com/PluralKit/PluralKit)
 PluralKit is a Discord bot meant for plural communities. It has features like message proxying through webhooks, switch tracking, system and member profiles, and more.
